@@ -1,0 +1,23 @@
+{
+  "name": "ffi-bot",
+  "version": "1.0.0",
+  "description": "Homelab webhook relay to Discord",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "discord",
+    "webhook",
+    "homelab",
+    "notifications"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "tweetnacl": "^1.0.3",
+    "ws": "^8.21.1"
+  }
+}

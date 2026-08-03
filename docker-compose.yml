@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  ffi-bot:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-your-github-user}/ffi-bot:latest
+    container_name: ffi-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT:-3000}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_APP_ID: ${DISCORD_APP_ID}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      DISCORD_USER_ID: ${DISCORD_USER_ID}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
