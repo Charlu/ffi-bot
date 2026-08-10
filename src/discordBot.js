@@ -194,7 +194,48 @@ function createGatewayBot({ token, onCommand, onReady, WebSocketImpl = WebSocket
     console.log('Connected to Discord gateway');
   });
 
-  ws.on('message', (raw) => {
+  ws.on('message', (data) => {
+    const payload = JSON.parse(data.toString());
+    console.log('Message received : ' + data.toString());
+    const { op, t, d, s } = payload;
+    const intents = 32256;
+
+    // Save the sequence number for heartbeats
+    if (s !== null) sequence = s;
+
+    switch (op) {
+      case 10: // HELLO Event
+        const { heartbeat_interval } = d;
+        
+        // 1. Start the Heartbeat loop to keep connection alive
+        startHeartbeat(ws, heartbeat_interval);
+
+        // 2. Identify your bot to bring it online
+        identify(ws, token, intents);
+        break;
+
+      case 11: // HEARTBEAT ACK
+        // Discord acknowledged our heartbeat; safely ignore
+        break;
+
+      case 0: // DISPATCH Events (Ready, Message Created, etc.)
+        if (t === 'READY') {
+          console.log(`Logged in as ${d.user.username}`);
+          if (onReady) onReady(d.user);
+        }
+        if (t === 'MESSAGE_CREATE' && onCommand) {
+          onCommand(d);
+        }
+        break;
+    }
+  });
+
+  ws.on('close', (code, reason) => {
+    console.log(`Disconnected: ${code} - ${reason}`);
+    clearInterval(heartbeatTimer);
+  });
+
+  ws.on('BKP_message', (raw) => {
     const payload = JSON.parse(raw.toString());
 
     if (payload.s) {
@@ -242,11 +283,42 @@ function createGatewayBot({ token, onCommand, onReady, WebSocketImpl = WebSocket
     }
   });
 
-  ws.on('close', () => {
+  ws.on('BKP_close', () => {
     if (heartbeatTimer) {
       clearInterval(heartbeatTimer);
     }
   });
+
+  // Helper function to send heartbeats
+  function startHeartbeat(ws, interval) {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = setInterval(() => {
+      ws.send(JSON.stringify({
+        op: 1, // Heartbeat opcode
+        d: sequence
+      }));
+    }, interval);
+  }
+
+  // Helper function to authenticate
+  function identify(ws, token, intents) {
+    ws.send(JSON.stringify({
+      op: 2, // Identify opcode
+      d: {
+        token: token,
+        intents: intents, // Integer representing your bot permissions
+        properties: {
+          os: 'linux',
+          browser: 'my_custom_library',
+          device: 'my_custom_library'
+        },
+        presence: {
+          status: 'online', // Force bot to appear online
+          afk: false
+        }
+      }
+    }));
+  }
 
   return ws;
 }
