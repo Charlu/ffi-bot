@@ -41,6 +41,9 @@ function startServer() {
 
         req.on('end', async () => {
             try {
+                res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: true, message: 'Webhook received and logged' }));
+                
                 const payload = rawBody ? JSON.parse(rawBody) : {};
                 console.log('Received webhook payload:', payload);
 
@@ -57,9 +60,6 @@ function startServer() {
                 }
 
                 console.log('Prepared Discord payload:', discordPayload);
-
-                res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ ok: true, message: 'Webhook received and logged' }));
             } catch (error) {
                 console.error('Webhook processing failed:', error.message);
                 res.writeHead(500, { ...corsHeaders, 'Content-Type': 'application/json' });
@@ -76,7 +76,6 @@ const server = startServer();
 async function initializeDiscordServices() {
     const botToken = process.env.DISCORD_BOT_TOKEN;
     const applicationId = process.env.DISCORD_APP_ID;
-    const guildId = process.env.DISCORD_GUILD_ID;
 
     if (!botToken) {
         return;

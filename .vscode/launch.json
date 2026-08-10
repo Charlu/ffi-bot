@@ -7,10 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/src/server.js",
       "cwd": "${workspaceFolder}",
-      "envFile": [
-        "${workspaceFolder}/.env",
-        "${workspaceFolder}/.env.example"
-      ],
+      "envFile": "${workspaceFolder}/.env",
       "console": "integratedTerminal",
       "restart": true,
       "skipFiles": [
