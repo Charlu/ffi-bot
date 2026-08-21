@@ -4,10 +4,20 @@
 {
 	"name": "Node.js",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-18-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  	"workspaceFolder": "/workspaces/ffi-bot",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	"features": {
+	    "ghcr.io/devcontainers/features/node:2": {
+	      "version": "lts"
+	    },
+	    "ghcr.io/devcontainers/features/docker-from-docker:1": {
+	      "version": "latest",
+	      "moby": false,
+	      "socketPath": "/var/run/docker-host.sock"
+	    }
+	},
 	
 	// Configure tool-specific properties.
 	"customizations": {
