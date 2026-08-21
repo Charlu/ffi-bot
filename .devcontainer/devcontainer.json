@@ -7,8 +7,13 @@
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-18-bullseye",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
+	"features": {
+		"ghcr.io/devcontainers/features/docker-from-docker:1": {
+      		"version": "latest",
+      		"moby": true
+    	}
+	},
+	
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
